@@ -15,6 +15,8 @@ public class Spawner : MonoBehaviour
 {
     public Transform Player;
     public GameObject Prefab;
+    [HideInInspector]
+    public List<Vector2> GridForShow;
 
     public float PlayerRadius;
 
@@ -33,7 +35,7 @@ public class Spawner : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown("j"))
+        if (Input.GetKeyDown("j"))
         {
             SpawnMeteor();
         }
@@ -73,16 +75,19 @@ public class Spawner : MonoBehaviour
         y = transform.position.y + _camBorder.Vertical;
         endPoint = new Vector2(x, y);
 
-        length = (_camBorder.Horizontal * 2 * _camBorder.Vertical * 2);
+        length = ((_camBorder.Horizontal * 2)+1) * (1+(_camBorder.Vertical * 2));
         for (int i = 0; i < length; i++)
         {
-            newPoint.x = newPoint.x + 1;
-            
+
             // move to the next height if all the x is covered
             if (newPoint.x >= endPoint.x)
             {
                 newPoint.y = newPoint.y + 1;
                 newPoint.x = startingPoint.x;
+            }else
+            {
+                if (i != 0)
+                    newPoint.x = newPoint.x + 1;
             }
 
             // Check if the point is in the players zone
@@ -90,14 +95,15 @@ public class Spawner : MonoBehaviour
             if (distance >= PlayerRadius)
                 grid.Add(newPoint);
 
-        }
 
+        }
+        GridForShow = grid;
         return grid;
     }
 
     Vector2 GetRandomPoint(List<Vector2> grid)
     {
-        int ran = Random.Range(0, grid.Count-1);
+        int ran = Random.Range(0, grid.Count - 1);
         print($"Range {ran}");
         return grid[ran];
     }
